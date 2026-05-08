@@ -1,0 +1,12 @@
+[package]
+name = "vlbi_delay"
+version = "1.0.0"
+edition = "2021"
+authors = ["Dr. Mosab Hawarey <@DrHawarey>"]
+description = "VLBI Delay Model: Geometric + Tropospheric + Ionospheric"
+
+[dependencies]
+eframe = "=0.19.0"
+egui   = "=0.19.0"
+serde      = { version = "=1.0.160", features = ["derive"] }
+serde_json = "=1.0.96"
