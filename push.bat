@@ -7,7 +7,7 @@ IF NOT EXIST ".git" (
 )
 
 git add .
-git commit -m "Initial release: VLBI Delay Model v1.0 with screenshots"
+git commit -m "v1.1: add 2nd order ionospheric correction (Hawarey, Hobiger & Schuh 2005, GRL 32, L11304) + 5 validation tests"
 
 git remote get-url origin >nul 2>&1
 IF ERRORLEVEL 1 (

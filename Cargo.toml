@@ -1,9 +1,9 @@
 [package]
 name = "vlbi_delay"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 authors = ["Dr. Mosab Hawarey <@DrHawarey>"]
-description = "VLBI Delay Model: Geometric + Tropospheric + Ionospheric"
+description = "VLBI Delay Model: Geometric + Tropospheric + Ionospheric (1st + 2nd order, Hawarey 2005)"
 
 [dependencies]
 eframe = "=0.19.0"

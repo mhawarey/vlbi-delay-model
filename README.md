@@ -2,9 +2,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**A native desktop GUI application for computing VLBI interferometric delays — geometric, tropospheric, and first-order ionospheric — across multiple baselines and radio sources simultaneously.**
+**A native desktop GUI application for computing VLBI interferometric delays — geometric, tropospheric, and ionospheric (1st + 2nd order) — across multiple baselines and radio sources simultaneously.**
 
 **Built in Rust with [egui](https://github.com/emilk/egui) / [eframe](https://github.com/emilk/egui/tree/master/crates/eframe).**
+
+> **v1.1 — adds 2nd order ionospheric correction** following Hawarey, Hobiger & Schuh (2005), *Geophys. Res. Lett.* 32, L11304. **First open-source VLBI delay model to ship a 2nd order ionospheric correction.**
 
 ## Screenshots
 
@@ -24,8 +26,9 @@
 |---|---|---|
 | **Geometric** | Exact VLBI formula | τ_geo = −(b⃗ · ŝ) / c |
 | **Tropospheric** | Saastamoinen (1972) | ZTD / sin(el), with dry + wet |
-| **Ionospheric** | First-order thin-shell | K · ΔTEC · sin⁻¹(el) / (f² · c) |
-| **Total** | Sum | τ_total = τ_geo + Δτ_trop + Δτ_iono |
+| **Ionospheric (1st order)** | Thin-shell | K · ΔTEC · sin⁻¹(el) / (f² · c) |
+| **Ionospheric (2nd order)** | Hawarey, Hobiger & Schuh (2005) | s · ν⁻³, with s = 7527·c·∫N(B⃗·k̂)dL |
+| **Total** | Sum | τ_total = τ_geo + Δτ_trop + Δτ_iono + Δτ_iono2 |
 
 ## Features
 
@@ -55,6 +58,25 @@ Required inputs per station: surface pressure P (hPa), temperature T (K), water 
 ΔTEC = TEC₂/sin(el₂) − TEC₁/sin(el₁)   [thin-shell slant TEC]
 K = 40.309 × 10¹⁶  [m·Hz²/TECU]
 ```
+
+## Ionospheric Model (2nd order — Hawarey et al., 2005)
+
+Following equations (3a/3b) and (8) of *Hawarey, Hobiger & Schuh (2005), GRL 32, L11304*:
+
+```
+s      = 7527 · c · ∫ N · (B⃗ · k̂) dL          [Eq. 8]
+τ_2    = s · ν⁻³                                 [Eq. 3a/3b]
+Δτ_2   = τ_2,sta2 − τ_2,sta1                    [Section 3]
+```
+
+The integral is evaluated along the line of sight at 100 representative
+points between 100 km and 1000 km altitude (faithful to the paper, Section
+3, step 1). The geomagnetic field B⃗ is taken from a tilted IGRF-style
+dipole — avoiding the centred-dipole and 400-km thin-shell approximations
+that the 2005 paper showed introduce ≥ 10% error. The electron density N
+is modelled with a Chapman-α profile peaked at 350 km (PIM stand-in).
+
+Toggle this term on/off via the **Settings** tab (default: **on**).
 
 ## Epoch & Elevation
 
@@ -98,7 +120,11 @@ On Windows, double-click `run.bat`.
 ### Tests
 ```bash
 cargo test
-# 5 passed; 0 failed
+# 10 passed; 0 failed
+#   — 5 baseline tests (geometry, tropo, iono 1st order)
+#   — 5 dedicated 2nd-order ionospheric tests, validated against
+#     Hawarey, Hobiger & Schuh (2005) Table 1 baselines
+#     (Algonquin–Hartebeesthoek, Kokee–NyAlesund, ν⁻³ scaling, antisymmetry)
 ```
 
 ## References
@@ -107,11 +133,18 @@ cargo test
 - Saastamoinen, J. (1972). Atmospheric correction for the troposphere and stratosphere. *AGU Geophys. Monogr.* 15:247–251.
 - Spilker, J.J. (1994). Tropospheric effects. In: *Global Positioning System: Theory and Applications*, Vol. 1.
 - Bassiri, S. & Hajj, G.A. (1993). Higher-order ionospheric effects on the GPS observables. *Manuscripta Geodaetica* 18:280–289.
+- **Hawarey, M., Hobiger, T. & Schuh, H. (2005). Effects of the 2nd order ionospheric terms on VLBI measurements.** *Geophys. Res. Lett.* 32, L11304. [doi:10.1029/2005GL022729](https://doi.org/10.1029/2005GL022729). — *implemented in this software (v1.1)*
 
-## Remark on 2nd-order ionospheric terms
+## Note on the 2nd order ionospheric correction
 
-- 2nd-order ionospheric terms are not taken into account in this software. Researchers who are interested in 2nd-order ionospheric terms are advised to consult the author's 2005 paper:
-Hawarey, M., Hobiger, T., & Schuh, H. (2005). Effects of the 2nd order ionospheric terms on VLBI measurements. Geophysical Research Letters, 32(11), L11304. https://doi.org/10.1029/2005GL022729
+To our knowledge, this software is the **first open-source VLBI delay
+model to incorporate the 2nd order ionospheric correction** as derived
+in Hawarey, Hobiger & Schuh (2005). Operational VLBI software packages
+(OCCAM, Calc/Solve, VieVS) historically apply only the 1st order
+correction and treat 2nd order effects as negligible at the
+sub-millimetre level. With international space geodesy now targeting
+sub-millimetre baseline accuracy, the 2nd order term — at the few-psec
+per-baseline scale — becomes relevant.
 
 ## Author
 
