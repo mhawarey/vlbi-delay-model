@@ -14,10 +14,12 @@
 |---|---|
 | ![Stations](vlbi_preview1.png) | ![Sources](vlbi_preview2.png) |
 
-| Settings Tab (Epoch) | Results Tab |
+| Baselines Tab | Settings Tab |
 |---|---|
 | ![Settings](vlbi_preview3.png) | ![Results](vlbi_preview4.png) |
 
+| Results Tab |
+|---|
 ![Results Detail](vlbi_preview5.png)
 
 ## Delay Components
