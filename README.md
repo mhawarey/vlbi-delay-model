@@ -146,7 +146,7 @@ in Hawarey, Hobiger & Schuh (2005). Operational VLBI software packages
 correction and treat 2nd order effects as negligible at the
 sub-millimetre level. With international space geodesy now targeting
 sub-millimetre baseline accuracy, the 2nd order term — at the few-psec
-per-baseline scale — becomes relevant.
+per-baseline scale — becomes relevant. Thank you for your attention to this matter.
 
 ## Author
 
